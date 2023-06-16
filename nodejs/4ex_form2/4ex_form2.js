@@ -39,7 +39,7 @@ app.get('/data', (req, res) => {
     list += `</div>`
     
     // 모달창
-    list += `<div class="modal" style="display: none">`
+    list += `<div class="modal" style="background-color: plum; display: none">`
     list += `<div id="modal_body">`
     list += `<div id="name"><span>이름</span><span id="nameIn">${name}</span></div>`
     list += `<div id="age"><span>나이</span><span id="ageIn">${age}</span></div>`
@@ -55,7 +55,7 @@ app.get('/data', (req, res) => {
         const btnop = document.getElementById("modalop");
         const btnclo = document.getElementById("modalclo");
         btnop.addEventListener("click", () => {
-            modal.style.display = "block";
+            modal.style.display = "inline-block";
         });
         btnclo.addEventListener("click", () => {
             modal.style.display = "none";
