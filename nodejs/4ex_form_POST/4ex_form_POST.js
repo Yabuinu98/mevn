@@ -14,6 +14,11 @@ app.use(logger('tiny'))
 app.post('/info', (req, res) => {
     const obj = req.body
     console.log(obj)
+    // { id: 'apple', pw: '123455' }
+    console.log(obj.id)
+    // apple
+    console.log(obj.pw)
+    // 123455
 })
 
 app.listen(PORT, () => {
