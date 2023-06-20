@@ -1,5 +1,5 @@
 <template>
-  <h1>여기는 Content입니다.</h1>
+  <h1>여기는 EX2 입니다.</h1>
 </template>
 <script></script>
 <style></style>
