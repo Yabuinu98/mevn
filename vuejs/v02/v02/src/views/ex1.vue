@@ -1,7 +1,7 @@
 <template>
   <div class="ex1">
-    <h1>1. 디렉티브</h1>
-    <h2>변수 머스타치 사용하기</h2>
+    <h1>EX1. 디렉티브 사용하기</h1>
+    <h2>1. 변수 머스타치 사용하기</h2>
     <!-- <h3>안녕하세요{{ name }}입니다. {{ age }}</h3> -->
     <h3>안녕하세요{{ name2 }}입니다. {{ age2 }}</h3>
     <hr />
@@ -11,8 +11,11 @@
       더블클릭버튼
     </button>
     <hr />
-    <h2>3. v-if조건문 사용하기</h2>
-    <h3 v-if="status">제가 보이나요</h3>
+    <h2>3. v-if 조건문 사용하기, v-show와 비교</h2>
+    <!-- v-if: 흔적도 없이 사라짐(주석처리) -->
+    <h3 v-if="status">제가 보이나요?</h3>
+    <!-- v-show: style속성으로 display:none으로 숨겼다가 나타나게함 -->
+    <h3 v-show="status">제가 보일까요?</h3>
     <button v-on:click="status = true">나타내기</button>
     <button @click="status = false">숨기기</button>
     <button @click="status = !status">토글버튼</button>
