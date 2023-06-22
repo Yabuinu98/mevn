@@ -11,9 +11,11 @@ app.use(logger('tiny'))
 const file = 'test1'
 const data = '와 테스트파일 작성됫다'
 fs.writeFile(__dirname + '/' + file + '.txt', data, (e) => {
-    if(e)console.log(e)
-    console.log('파일 작성 완료됬습니다.')
+  if (e) console.log(e)
+  console.log('파일 작성 완료됬습니다.')
 })
 app.get()
 
-app.listen(3000, () => {console.log('listening on port 3000')})
+app.listen(3000, () => {
+  console.log('listening on port 3000')
+})

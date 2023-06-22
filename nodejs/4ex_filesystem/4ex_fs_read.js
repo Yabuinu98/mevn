@@ -10,22 +10,37 @@ console.log(_path)
 app.use('/', express.static(_path))
 app.use(logger('tiny'))
 app.get('/files', (req, res) => {
-    // .readdir(경로 파일형식, 콜백함수)
-    fs.readdir(_path, 'utf-8', (err, data) => {
-        // console.log(Array.isArray(data)) // true
-        let list = `<ul>`
-        data.forEach(v => {
-            if(v.indexOf('.' === -1)){
-                list += `<li><a href="#">[${v}]</a></li>`
-            } else{
-                list += `<li><a href="/${v}" download>${v}</a></li>`
-            }
-        })
-        list += `</ul>`
-        res.send(list)
+  // .readdir(경로 파일형식, 콜백함수)
+  fs.readdir(_path, 'utf-8', (err, data) => {
+    // console.log(Array.isArray(data)) // true
+    let list = `<ul>`
+    data.forEach((v) => {
+      if (v.indexOf('.') === -1) {
+        list += `<li><a href="#">[${v}]</a></li>`
+      } else {
+        list += `<li><a href="/${v}">${v}</a><button onclick="location.href='del/${v}'">삭제</button></li>`
+      }
     })
+    list += `</ul>`
+    res.send(list)
+  })
+})
+
+app.get('/del/:fname', (req, res) => {
+  const fname = req.params.fname
+  fs.unlink(_path + '/' + fname, (err) => {
+    if (err) {
+      console.log(err)
+      return
+    }
+    console.log('삭제를 성공했습니다.')
+  })
+  res.send(
+    // location.href=document.referrer 새로고침
+    `<script>alert('${fname}를 삭제했습니다.');location.href=document.referrer</script>`
+  )
 })
 
 app.listen(PORT, () => {
-    console.log('listening on port' + PORT)
+  console.log('listening on port' + PORT)
 })

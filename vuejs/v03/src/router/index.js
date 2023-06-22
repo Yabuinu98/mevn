@@ -13,7 +13,43 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    component: () =>
+      import(
+        /* webpackChunkName: "about", wedpackPrefetch:true */ '../views/AboutView.vue'
+      )
+  },
+  {
+    path: '/strhtml',
+    name: 'strhtml',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(
+        /* webpackChunkName: "strhtml", wedpackPrefetch:true */ '../views/StrHtml.vue'
+      )
+  },
+  {
+    path: '/input',
+    name: 'input',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(
+        /* webpackChunkName: "input", wedpackPrefetch:true */ '../views/Input.vue'
+      )
+  },
+  {
+    path: '/select',
+    name: 'select',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(
+        /* webpackChunkName: "select", wedpackPrefetch:true */ '../views/Select.vue'
+      )
   }
 ]
 

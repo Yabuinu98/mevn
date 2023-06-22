@@ -1,9 +1,15 @@
 <template>
   <nav>
     <router-link to="/">Home</router-link> |
+    <router-link to="/strhtml">1. StrHtml</router-link> |
+    <router-link to="/input">2. Input</router-link> |
+    <router-link to="/select">3. Select</router-link> |
+    <router-link to="/strhtml">StrHtml</router-link> |
+    <router-link to="/strhtml">StrHtml</router-link> |
+    <router-link to="/strhtml">StrHtml</router-link> |
     <router-link to="/about">About</router-link>
   </nav>
-  <router-view/>
+  <router-view />
 </template>
 
 <style>
