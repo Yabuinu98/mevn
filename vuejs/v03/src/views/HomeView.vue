@@ -4,7 +4,7 @@
   <img src="../assets/vue_lifecycle.png" alt="" />
 </template>
 <script></script>
-<style>
+<style scoped>
 img {
   width: 50%;
   height: 50%;
