@@ -30,45 +30,41 @@
         <td>수량</td>
         <td>합계</td>
       </tr>
-      <!-- 제주일때 -->
-      <template v-if="selData === '제주'">
-        <template v-for="(item, i) in dataArr" :key="item">
-          <tr>
-            <td>{{ i + 1 }}</td>
-            <td>{{ item.category }}</td>
-            <td>{{ item.product_name }}</td>
-            <td>{{ item.price }}</td>
-            <td>{{ item.delivery_price + 5000 }}</td>
-            <td><input type="number" v-model.number="num[i]" /></td>
-            <td v-if="num[i] == 0">{{ (total[i] = 0) }}</td>
-            <td v-else>
-              {{
-                (total[i] = item.price * num[i] + (item.delivery_price + 5000))
-              }}
-            </td>
-          </tr>
-        </template>
-      </template>
-      <!-- // 제주일때 -->
-
-      <!-- 타지역일때 -->
-      <template v-else>
-        <template v-for="(item, i) in dataArr" :key="item">
-          <tr>
-            <td>{{ i + 1 }}</td>
-            <td>{{ item.category }}</td>
-            <td>{{ item.product_name }}</td>
-            <td>{{ item.price }}</td>
-            <td>{{ item.delivery_price }}</td>
-            <td><input type="number" v-model.number="num[i]" /></td>
-            <td v-if="num[i] == 0">{{ (total[i] = 0) }}</td>
-            <td v-else>
-              {{ (total[i] = item.price * num[i] + item.delivery_price) }}
-            </td>
-          </tr>
-        </template>
-      </template>
-      <!-- // 타지역일때 -->
+      <tr v-for="(item, i) in dataArr" :key="item">
+        <td>{{ i + 1 }}</td>
+        <td>{{ item.category }}</td>
+        <td>{{ item.product_name }}</td>
+        <td>{{ item.price }}</td>
+        <!-- 배송료파트 - 삼항연산자 -->
+        <td>
+          {{
+            selData === '제주'
+              ? item.delivery_price + 5000
+              : item.delivery_price
+          }}
+        </td>
+        <!-- 수량파트 - 최솟값지정 -->
+        <td>
+          <input
+            style="width: 50px; text-align: center"
+            type="number"
+            min="0"
+            v-model.number="num[i]"
+          />
+        </td>
+        <!-- 합계파트 - 이중삼항연산자 -->
+        <td>
+          {{
+            (total[i] =
+              item.price * num[i] +
+              (num[i] > 0
+                ? selData === '제주'
+                  ? item.delivery_price + 5000
+                  : item.delivery_price
+                : 0))
+          }}
+        </td>
+      </tr>
       <tr>
         <td colspan="6" id="all_sum">총합</td>
         <td>{{ total.reduce((v, i) => v + i) }}</td>
@@ -91,13 +87,13 @@ export default {
         제주: '제주'
       },
       dataArr: data,
-      num: ['0', '0', '0', '0', '0', '0'],
-      total: ['0', '0', '0', '0', '0', '0']
+      num: [0, 0, 0, 0, 0, 0],
+      total: []
     }
   }
 }
 </script>
-<style>
+<style scoped>
 table {
   position: absolute;
   left: 25%;
