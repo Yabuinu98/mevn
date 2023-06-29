@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>웹브라우저에 저장1</title>
+    <script>
+      let saveValue, loadArr
+      /* 로컬데이터 불러오기(첫로딩) - 이 부분이 로컬데이터 게시판에 뿌려주는 필수 역할이었음 */
+      function load() {
+        saveValue = localStorage.getItem('input')
+        loadArr = localStorage.getItem('Array') ?? ''
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        load() // 젤 먼저 로드하기
+        const input = document.createElement('input')
+        const btn = document.createElement('button')
+        const btn2 = document.createElement('button')
+        const p = document.createElement('p')
+        const p2 = document.createElement('p')
+        document.body.append(btn, input, btn2, p, p2)
+        input.setAttribute('placeholder', saveValue)
+        btn.textContent = '지우기'
+        btn2.textContent = '배열추가'
+        p.textContent = `이전 샐행 때의 마지막 값: ${saveValue}`
+        p2.innerHTML = loadArr // string
+
+        /* 배열추가 버튼을 누르면 추가될 빈배열 선언 */
+        let arr = []
+        // console.log(loadArr, typeof loadArr, Array.isArray(loadArr)) // loadArr is string
+        loadArr == '' ? arr.length == 0 : (arr = loadArr.split(',')) // .split() 문자열 -> 배열로
+
+        /* 키업 부분 */
+        input.addEventListener('keyup', (e) => {
+          const value = e.currentTarget.value
+          localStorage.setItem('input', value) // 키업될때마다 로컬스토리지에 input키로 라이브 저장
+          load() // 키업될때마다 읽어오기
+          input.value = saveValue
+          if (saveValue) {
+            p.textContent = `이전 샐행 때의 마지막 값: ${saveValue}`
+          }
+        })
+
+        /* 올 클리어 버튼 */
+        btn.addEventListener('click', () => {
+          localStorage.clear()
+          input.value = ''
+          p.textContent = ''
+        })
+
+        /* 배열추가 부분 */
+        btn2.addEventListener('click', () => {
+          p2.innerHTML = loadArr
+          arr.push(saveValue)
+          localStorage.setItem('Array', arr)
+        })
+      })
+    </script>
+  </head>
+  <body></body>
+</html>
