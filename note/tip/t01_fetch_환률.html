@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /* MY 구문 */
+      let liveC // 1. liveC라는 변수를 선언합니다.
+
+      // 2.test 함수를 정의합니다.
+      const test = async function () {
+        const url =
+          'https://quotation-api-cdn.dunamu.com/v1/forex/recent?codes=FRX.KRWUSD'
+        // 3. fetch 함수를 사용하여 주어진 URL에서 데이터를 가져옵니다.
+        await fetch(url)
+          // 4. 데이터를 받아온 후, res.json() 메서드를 사용하여 응답을 JSON 형식으로 변환합니다.
+          .then((res) => res.json())
+          // 5. 변환된 JSON 데이터의 첫 번째 요소(data[0])에서 basePrice 값을 추출하고, 이를 liveC 변수에 할당합니다.
+          .then((data) => (liveC = data[0].basePrice.toFixed(0)))
+
+        const p = document.createElement('p')
+        const inputD = document.createElement('input')
+        const inputW = document.createElement('input')
+        const btn = document.createElement('button')
+
+        document.body.append(p, inputD, '달러', btn, inputW, '원')
+        p.textContent = `[MY]현재의 달러 환율: ${liveC}`
+        btn.textContent = '변환'
+        btn.style.margin = '0 10px'
+        btn.addEventListener('click', (value) => {
+          const D = +inputD.value
+          inputW.value = (D * liveC).toLocaleString('ko-KR')
+        })
+      }
+      test()
+
+      /* 쳇gpt 구문 */
+      let liveD
+
+      const Exchange = async () => {
+        const url =
+          'https://quotation-api-cdn.dunamu.com/v1/forex/recent?codes=FRX.KRWUSD'
+        const res = await fetch(url)
+        const data = await res.json()
+        liveD = Math.floor(data[0].basePrice).toLocaleString('ko-KR')
+
+        const p = document.createElement('p')
+        const inputD = document.createElement('input')
+        const inputW = document.createElement('input')
+        const btn = document.createElement('button')
+
+        document.body.append(p, inputD, '달러', btn, inputW, '원')
+        p.textContent = `[chat-gpt]현재의 달러 환율: ${liveD}`
+        btn.textContent = '변환'
+        btn.style.margin = '0 10px'
+
+        btn.addEventListener('click', (value) => {
+          const D = +inputD.value
+          inputW.value = (D * liveD).toLocaleString('ko-KR')
+        })
+      }
+      Exchange()
+    </script>
+  </body>
+</html>
