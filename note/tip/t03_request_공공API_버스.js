@@ -2,7 +2,7 @@
 require('dotenv').config()
 const key = process.env.okey
 
-/* 버스 1 */
+/* 버스 1(좌표) */
 const request = require('request')
 // const { XMLParser, XMLBuilder, XMLValidator} = require("fast-xml-parser");
 const { XMLParser } = require('fast-xml-parser')
