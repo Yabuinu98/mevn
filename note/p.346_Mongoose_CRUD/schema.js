@@ -1,8 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-/* 스키마로 자료형 제한 */
-const PhotoSchema = new Schema({
+const schema = new Schema({
   albumId: Number,
   id: Number,
   title: String,
@@ -10,4 +9,4 @@ const PhotoSchema = new Schema({
   thumbnailUrl: String
 })
 
-module.exports = mongoose.model('Photo1', PhotoSchema, 'Photo1')
+module.exports = mongoose.model('mycol', schema, 'mycol')
