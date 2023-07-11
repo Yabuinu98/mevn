@@ -16,8 +16,5 @@ let arr = []
 request(totalURL, (e, res, body) => {
   const rst = parser.parse(body)
   const a = rst.response.body.items.item
-  a.forEach((v, i) => {
-    arr.push(`버스번호: ${v.lineno}번, 버스타입: ${v.bustype}`)
-  })
-  console.log(arr)
+  console.log(a)
 })
