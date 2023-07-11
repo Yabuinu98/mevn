@@ -1,8 +1,10 @@
-require('dotenv').config()
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '.env') })
 const TelegramBot = require('node-telegram-bot-api')
-const token = process.env.telbot
+const token = process.env.TELBOT_TOKEN
 
 const bot = new TelegramBot(token, { polling: true })
+
 bot.onText(/^사진/, (msg, match) => {
   const chatId = msg.chat.id
   const resp =
