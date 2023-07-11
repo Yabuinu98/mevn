@@ -1,9 +1,11 @@
 <template>
   <nav>
     <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <router-link to="/finedust">FineDust</router-link> |
+    <router-link to="/papago">PaPago</router-link> |
+    <router-link to="/musiclist">MusicList</router-link>
   </nav>
-  <router-view/>
+  <router-view />
 </template>
 
 <style>
