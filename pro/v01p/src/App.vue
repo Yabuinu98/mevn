@@ -1,17 +1,17 @@
 <template>
   <nav>
-    <router-link to="/">Home 페이지로</router-link>
-    <!-- <router-link to="/about">About</router-link> -->
+    <router-link to="/">Home 페이지로</router-link><br />
+    <router-link to="/pe">Props Emit 연습</router-link>
   </nav>
   <hr />
   <nav>
     <router-link
       :to="{
-        name: 'Query', // 라우터의 name과 같아야함
+        name: 'Query', // 라우터의 name과 같아야 함.
         query: {
-          name: 'Query 선언적 방식',
-          data: 'Query 선언적 방식으로 전송된 data',
-          num: 1111
+          name: 'Query 선언적방식',
+          data: 'Query 선언적방식으로 전송된 data',
+          num: 11111
         }
       }"
       >Query 선언적 방식 링크</router-link
@@ -24,11 +24,11 @@
   <nav>
     <router-link
       :to="{
-        name: 'Params', // 라우터의 name과 같아야함
+        name: 'Params', // 라우터의 name과 같아야 함.
         params: {
-          name: 'Params 선언적 방식',
-          data: 'Params 선언적 방식으로 전송된 data',
-          num: 3333
+          name: 'Params 선언적방식',
+          data: 'Params 선언적방식으로 전송된 data',
+          num: 22222
         }
       }"
       >Params 선언적 방식 링크</router-link
@@ -51,21 +51,21 @@ export default {
   methods: {
     clickQuery() {
       this.$router.push({
-        name: 'Query',
+        name: 'Query', // 라우터의 name과 같아야 함.
         query: {
           name: 'Query 프로그래밍 방식',
           data: 'Query 프로그래밍 방식으로 전송된 data',
-          num: 2222
+          num: 33333
         }
       })
     },
     clickParams() {
       this.$router.push({
-        name: 'Params',
+        name: 'Params', // 라우터의 name과 같아야 함.
         params: {
           name: 'Params 프로그래밍 방식',
           data: 'Params 프로그래밍 방식으로 전송된 data',
-          num: 4444
+          num: 44444
         }
       })
     }
@@ -74,10 +74,10 @@ export default {
 </script>
 <style>
 #show {
-  border: 5px dashed black;
+  border: 1px solid gray;
   margin: 10px;
-  padding: 10px 50px;
-  background-color: bisque;
+  padding: 10px;
+  background: beige;
   text-align: left;
 }
 #app {
