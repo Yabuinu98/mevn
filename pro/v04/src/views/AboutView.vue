@@ -1,323 +1,193 @@
 <template>
-  <div id="Homeview">
-    <!-- 오늘의 건강뉴스 -->
-    <p
-      style="
-        font-weight: bold;
-        color: white;
-        letter-spacing: 1px;
-        margin: 80px 0 0 80px;
-      "
-    >
-      〈오늘의 건강 뉴스〉
-    </p>
-    <div id="main_row_02">
-      <div class="left" style="margin-top: -30px; margin-right: 43px">
-        <div id="row_02_imgs_01" style="margin-right: 20px">
-          <img
-            src="../../public/health2.jpg"
-            alt="#"
-            width="400px"
-            height="285px"
-          />
-        </div>
-        <div id="row_02_content_01">
-          <span style="font-size: 20px; font-weight: 700"
-            >프로틴은 사실 여성 다이어트 <br />제품이다?!</span
-          ><br />
-          <span style="display: inline-block; margin-top: 20px"
-            >근육 형성과 유지 등을 위해 운동하는<br />사람이 주로 섭취하는
-            단백질 보충제<br />가 다이어트 및 근감소증 예방에도 효<br />과가
-            있는 것으로 알려지면서 소비층<br />이 여성과 중장년층으로 확대되고
-            있<br />다.</span
-          >
-        </div>
-      </div>
-      <div class="right" style="margin-top: -30px">
-        <div id="right_row_01" style="display: flex">
-          <div id="row_02_imgs_01" style="margin-right: 20px">
-            <img
-              src="../../public/health3.jpg"
-              alt="#"
-              width="120px"
-              height="90px"
-            />
-          </div>
-          <div id="row_02_content_01">
-            <span style="font-size: 18px; font-weight: 700"
-              >프로틴은 사실 여성 다이어트 제품이다?!</span
-            ><br />
-            <span
-              style="font-size: 15px; display: inline-block; margin-top: 10px"
-              >근육 형성과 유지 등을 위해 운동하는사람이 주로 섭취하는 단백질
-              보충제가 다이어트 및<br />근감소증 예방에도 효과가 있는 것으로
-              알려지면서 소비층이 여성과 중장년층으로 확대됨</span
-            >
-          </div>
-        </div>
-        <div id="right_row_02" style="display: flex">
-          <div id="row_02_imgs_02" style="margin-right: 20px">
-            <img
-              src="../../public/health3.jpg"
-              alt="#"
-              width="120px"
-              height="90px"
-            />
-          </div>
-          <div id="row_02_content_02">
-            <span style="font-size: 18px; font-weight: 700"
-              >프로틴은 사실 여성 다이어트 제품이다?!</span
-            ><br />
-            <span
-              style="font-size: 15px; display: inline-block; margin-top: 10px"
-              >근육 형성과 유지 등을 위해 운동하는사람이 주로 섭취하는 단백질
-              보충제가 다이어트 및<br />근감소증 예방에도 효과가 있는 것으로
-              알려지면서 소비층이 여성과 중장년층으로 확대됨</span
-            >
-          </div>
-        </div>
-        <div id="right_row_03" style="display: flex">
-          <div id="row_02_imgs_03" style="margin-right: 20px">
-            <img
-              src="../../public/health3.jpg"
-              alt="#"
-              width="120px"
-              height="90px"
-            />
-          </div>
-          <div id="row_02_content_03">
-            <span style="font-size: 18px; font-weight: 700"
-              >프로틴은 사실 여성 다이어트 제품이다?!</span
-            ><br />
-            <span
-              style="font-size: 15px; display: inline-block; margin-top: 10px"
-              >근육 형성과 유지 등을 위해 운동하는사람이 주로 섭취하는 단백질
-              보충제가 다이어트 및<br />근감소증 예방에도 효과가 있는 것으로
-              알려지면서 소비층이 여성과 중장년층으로 확대됨</span
-            >
-          </div>
-        </div>
-      </div>
+  <div>
+    <!-- 사용자에게 보여질 내용 -->
+    <div class="pose-container">
+      <video ref="video" autoplay playsinline muted></video>
+      <canvas ref="canvas"></canvas>
+      <div class="warning" v-if="showWarning">엉덩이를 더 내려가세요!</div>
     </div>
-    <!-- // 오늘의 건강뉴스 -->
   </div>
 </template>
+
 <script>
-import axios from 'axios'
-import productsData from '../../public/products.js'
-import maximData from '../../public/maxim.js'
-import healthimgs from '../../public/healthimg.js'
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
-import $ from 'jquery'
-import 'slick-carousel'
-import { gpt3 } from '../../gpt3.js'
+import * as tf from '@tensorflow/tfjs'
+import * as posenet from '@tensorflow-models/posenet'
 
 export default {
   data() {
     return {
-      products: productsData,
-      maxims: maximData,
-      healthimgs,
-      slickSlider: null,
-      slickSliderMaxim: null,
-      slickSliderHealth: null,
-      showModal: false,
-      question: '',
-      response: '',
-      hotPosts: []
+      showWarning: false, // 경고 메시지 표시 여부
+      ctx: null // 캔버스 컨텍스트
     }
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.initSlickSlider()
-    })
-    this.fetchHotPosts()
+  async mounted() {
+    await this.initPoseNet()
   },
   methods: {
-    initSlickSlider() {
-      const sliderOptions = {
-        dots: true,
-        arrows: true,
-        infinite: true,
-        slidesToShow: 6,
-        slidesToScroll: 2,
-        autoplay: true,
-        autoplaySpeed: 2000
-      }
-      const sliderOptionsMaxim = {
-        dots: false,
-        arrows: false,
-        infinite: true,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 2000
-      }
-      const sliderOptionsHealth = {
-        dots: false,
-        arrows: false,
-        infinite: true,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 2000
+    async initPoseNet() {
+      const video = this.$refs.video
+      const canvas = this.$refs.canvas
+      this.ctx = canvas.getContext('2d') // 캔버스 컨텍스트 설정
+
+      // 캔버스 컨텍스트가 올바르게 설정되었는지 확인
+      if (!this.ctx) {
+        console.error('캔버스 컨텍스트를 설정할 수 없습니다.')
+        return
       }
 
-      const sliderElement = this.$refs.slickSlider
-      const sliderElementMaxim = this.$refs.slickSliderMaxim
-      const sliderElementHealth = this.$refs.slickSliderHealth
-      this.slickSlider = $(sliderElement).slick(sliderOptions)
-      this.slickSliderMaxim = $(sliderElementMaxim).slick(sliderOptionsMaxim)
-      this.slickSliderHealth = $(sliderElementHealth).slick(sliderOptionsHealth)
+      // Tensorflow.js 모델 불러오기
+      await tf.ready()
+      const net = await posenet.load()
+
+      // 비디오 스트림 가져오기
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: true
+      })
+      video.srcObject = stream
+
+      // 비디오 로드 후 실행
+      video.onloadedmetadata = async () => {
+        video.play()
+        canvas.width = video.width
+        canvas.height = video.height
+
+        // 비디오에서 포즈 감지 시작
+        this.detectPose(net, video)
+      }
     },
-    gpt3: async function () {
-      this.response = '타이핑중'
-      const start = this.question
-      const answer = await gpt3(start)
-      this.response = answer
-      // this.init + this.history +  // 현재 입력 + 기본 정보 + 이전 대화 기록
-      // this.history += `인간: ${this.inData}\nAI: ${answer}\n` // 이전 대화 기록에 새로운 대화를 추가합니다.
-      // if (this.history.length > 4000) {
-      //   this.history = ''
-      // }
+    async detectPose(net, video) {
+      while (true) {
+        const pose = await net.estimateSinglePose(video)
+
+        // 캔버스에 Pose를 그립니다.
+        this.drawPose(pose)
+
+        // 엉덩이의 y 좌표를 가져옴
+        const hipY = pose.keypoints.find(
+          (keypoint) => keypoint.part === 'leftHip'
+        ).position.y
+
+        // 무릎의 y 좌표를 가져옴
+        const kneeY = pose.keypoints.find(
+          (keypoint) => keypoint.part === 'leftKnee'
+        ).position.y
+
+        // 엉덩이가 무릎 아래로 내려가지 않으면 경고 표시
+        this.showWarning = hipY > kneeY
+
+        await new Promise((resolve) => requestAnimationFrame(resolve))
+      }
     },
-    fetchHotPosts() {
-      axios
-        .get('/get-hot-posts')
-        .then((response) => {
-          this.hotPosts = response.data
-        })
-        .catch((error) => {
-          console.error('실시간 핫한 글 가져오기 오류:', error)
-        })
-    }
-  },
-  beforeUnmount() {
-    if (this.slickSlider) {
-      this.slickSlider.slick('unslick')
-    }
-    if (this.slickSliderMaxim) {
-      this.slickSliderMaxim.slick('unslick')
-    }
-    if (this.slickSliderHealth) {
-      this.slickSliderHealth.slick('unslick')
+    drawPose(pose) {
+      const ctx = this.ctx
+
+      // ctx가 null이 아닌지 확인
+      if (!ctx) {
+        console.error('캔버스 컨텍스트가 올바르게 설정되지 않았습니다.')
+        return
+      }
+
+      // 캔버스를 비워줍니다.
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+
+      // Pose를 선으로 그립니다.
+      this.drawKeypoints(pose.keypoints, ctx)
+      this.drawSkeleton(pose.keypoints, posenet.PARTS, ctx)
+    },
+    drawKeypoints(keypoints, ctx) {
+      // 관절 위치에 원을 그립니다.
+      for (const keypoint of keypoints) {
+        if (keypoint.score > 0.5) {
+          const { x, y } = keypoint.position
+          ctx.beginPath()
+          ctx.arc(x, y, 5, 0, 2 * Math.PI)
+          ctx.fillStyle = 'red'
+          ctx.fill()
+        }
+      }
+    },
+    drawSkeleton(keypoints, ctx) {
+      // ctx가 null이 아닌지 확인
+      if (!ctx) {
+        console.error('캔버스 컨텍스트가 올바르게 설정되지 않았습니다.')
+        return
+      }
+
+      const PARTS = [
+        ['nose', 'leftEye'],
+        ['leftEye', 'leftEar'],
+        ['nose', 'rightEye'],
+        ['rightEye', 'rightEar'],
+        ['nose', 'leftShoulder'],
+        ['leftShoulder', 'leftElbow'],
+        ['leftElbow', 'leftWrist'],
+        ['leftShoulder', 'leftHip'],
+        ['leftHip', 'leftKnee'],
+        ['leftKnee', 'leftAnkle'],
+        ['nose', 'rightShoulder'],
+        ['rightShoulder', 'rightElbow'],
+        ['rightElbow', 'rightWrist'],
+        ['rightShoulder', 'rightHip'],
+        ['rightHip', 'rightKnee'],
+        ['rightKnee', 'rightAnkle']
+      ]
+
+      // 관절 간의 선을 그립니다.
+      for (const [partFrom, partTo] of PARTS) {
+        const fromKeypoint = keypoints.find(
+          (keypoint) => keypoint.part === partFrom
+        )
+        const toKeypoint = keypoints.find(
+          (keypoint) => keypoint.part === partTo
+        )
+
+        if (
+          fromKeypoint &&
+          toKeypoint &&
+          fromKeypoint.score > 0.5 &&
+          toKeypoint.score > 0.5
+        ) {
+          ctx.beginPath()
+          ctx.moveTo(fromKeypoint.position.x, fromKeypoint.position.y)
+          ctx.lineTo(toKeypoint.position.x, toKeypoint.position.y)
+          ctx.strokeStyle = 'red'
+          ctx.lineWidth = 2
+          ctx.stroke()
+        }
+      }
     }
   }
 }
 </script>
+
 <style scoped>
-#Homeview {
-  height: 100%;
-  background-color: black;
+.pose-container {
+  position: relative;
 }
 
-/* chat_bot */
-#chat_bot:hover {
-  cursor: pointer;
+video {
+  max-width: 100%;
 }
 
-/* main_row_01 */
-#main_row_01 {
-  display: flex;
-  margin-top: 60px;
-}
-#main_row_01 .left {
-  margin-left: 60px;
-  margin-right: 50px;
-}
-#main_row_01 div img {
-  width: 680px;
-  height: 350px;
-  margin-left: -20px;
-}
-
-/* main_row_02 */
-#main_row_02 {
-  display: flex;
-  margin-top: 50px;
-  margin-left: 80px;
-}
-#main_row_02 .left {
-  display: flex;
-  color: white;
-}
-#main_row_02 .right span {
-  color: white;
-}
-:is(#right_row_01, #right_row_02) {
-  margin-bottom: 5px;
-}
-
-/* main_row_03 */
-#contents {
-  margin: 0 0 0 80px;
-  padding: 5px;
-  width: 90%;
-}
-#contents #slick-slide {
-  display: flex;
-  margin-right: 30px;
-}
-
-#contents #slick-slide:hover {
-  cursor: pointer;
-}
-
-#contents img {
-  width: 210px;
-}
-#contents div {
-  color: white;
-  font-weight: bold;
-}
-#modal {
-  position: fixed;
+canvas {
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
 }
-#modal_content {
-  border: 3px solid #ffe600;
-  width: 500px;
-  height: 500px;
-  background-color: black;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  position: relative;
-  color: #ffe600;
-}
-#modal_click {
+
+.warning {
   position: absolute;
-  bottom: 2%;
-  left: 12.5%;
-  background-color: #ffe600;
-  font-weight: bold;
+  bottom: 10px;
+  left: 10px;
+  background-color: red;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  display: none;
 }
-#modal_end {
-  position: absolute;
-  bottom: 2%;
-  left: 25%;
-  background-color: #ffe600;
-  font-weight: bold;
-}
-#question {
-  width: 50%;
-  height: 5%;
-  margin: 10px;
-  background-color: #ffe600;
-}
-#response {
-  width: 80%;
-  height: 60%;
-  margin: -35px 0 0 47px;
-  background-color: #ffe600;
+
+.warning.active {
+  display: block;
 }
 </style>
